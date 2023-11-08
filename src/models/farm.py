@@ -1,13 +1,10 @@
-from sqlalchemy import Column, DateTime, String, Integer, func, ForeignKey
+from sqlalchemy import Column, DateTime, String, Integer, func
 from src.models.base import Base
-from sqlalchemy.orm import mapped_column
 
-
-class Sensor(Base):
-    __tablename__ = "sensor"
+class Farm(Base):
+    __tablename__ = "farm"
 
     id = Column(Integer, primary_key=True)
-    farm_id = mapped_column(ForeignKey("farm.id"))
     name = Column(String(60))
     created_at = Column(DateTime, default=func.now())
 

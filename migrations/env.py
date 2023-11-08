@@ -12,6 +12,7 @@ from src.models.inverter import Inverter
 from src.models.sensor_data import SensorData
 from src.models.inverter_data import InverterData
 from src.models.meter_data import MeterData
+from src.models.farm import Farm
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

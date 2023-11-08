@@ -13,6 +13,6 @@ def app():
 
 if __name__ == "__main__":
 
-    filename = 'resources/minute_values.csv'
+    filename = 'resources/farm_data/farm1/minute_values.csv'
     app()
     #run_function()
