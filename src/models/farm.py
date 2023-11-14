@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, String, Integer, func
 from src.models.base import Base
 
+
 class Farm(Base):
     __tablename__ = "farm"
 

@@ -12,4 +12,4 @@ class Sensor(Base):
     created_at = Column(DateTime, default=func.now())
 
     def __repr__(self):
-        return f"id: {self.id}, name: {self.name}"
+        return f"id: {self.id}, name: {self.name}, from farm: {self.farm_id}"
