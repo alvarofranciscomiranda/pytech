@@ -1,4 +1,6 @@
 from src.repositories.base_repository import BaseRepository
+from src.repositories.farm_repository import FarmRepository
+from src.repositories.in_memory_repository import InMemoryRepository
 from src.models.sensor import Sensor
 from src.models.farm import Farm
 from src.models.inverter import Inverter
@@ -45,4 +47,46 @@ def repositories_tests(session: scoped_session):
     # sensor1 = Sensor(farm_id=farm1.id, name="Sensor1")
     # created_sensor3 = sensor_repository.create(sensor1)
     # print("Created Sensor:", created_sensor3)
+
+
+def in_memory_repositories_tests():
+    sensor_repository = InMemoryRepository()
+    farm_repository = InMemoryRepository()
+    inverter_repository = InMemoryRepository()
+
+    new_farm = Farm(name="Farm55")
+    farm_repository.create(new_farm)
+
+    new_sensor = Sensor(farm_id=1, name="Sensor1")
+    new_sensor2 = Sensor(farm_id=1, name="Sensor2")
+
+    new_inverter = Inverter(farm_id=1, name="Inverter1")
+    new_inverter2 = Inverter(farm_id=1, name="Inverter2")
+
+    sensor_repository.create(new_sensor)
+    sensor_repository.create(new_sensor2)
+
+    inverter_repository.create(new_inverter)
+    inverter_repository.create(new_inverter2)
+
+    sensors = sensor_repository.get_all()
+    for f in sensors:
+        print(f)
+
+    sensor11 = sensor_repository.get_by_id(2)
+    sensor11.name = "novo_nome"
+
+    sensors = sensor_repository.get_all()
+    for f in sensors:
+        print(f)
+
+    sensor_repository.delete(sensor11)
+
+    sensors = sensor_repository.get_all()
+    for f in sensors:
+        print(f)
+
+
+
+
 
