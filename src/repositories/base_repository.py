@@ -18,11 +18,15 @@ class BaseRepository(IRepository):
     def create(self, obj: Base):
         self._session.add(obj)
         self._session.commit()
+        self._session.refresh(obj)
+        return obj
 
     def update(self, obj: Base):
         new_object = self._session.query(obj.__class__).filter(self._class.id == obj.id).first()
         self._session.add(new_object)
         self._session.commit()
+        self._session.refresh(obj)
+        return obj
 
     def delete(self, obj: Base):
         delete_object = self._session.query(obj.__class__).filter(self._class.id == obj.id).first()
