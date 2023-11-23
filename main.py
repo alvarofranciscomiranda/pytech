@@ -10,7 +10,7 @@ from src.models.inverter import Inverter
 from src.models.base import Base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from fastapi import FastAPI
-from src.controllers.farm_controller import FarmController, farm_router
+from src.controllers.farm_controller import FarmController
 import os
 
 
@@ -55,10 +55,9 @@ def create_routers():
     farm_controller = FarmController(farm_repository)
 
     # Include the router in the main FastAPI app
-    app.include_router(farm_router)
+    app.include_router(farm_controller.router)
 
     return app
-
 
 
 if __name__ == "__main__":

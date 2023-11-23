@@ -1,5 +1,7 @@
 from src.repositories.abstract_repository import IRepository
 from src.models.base import Base
+from pydantic import BaseModel
+from fastapi.encoders import jsonable_encoder
 
 
 class BaseRepository(IRepository):
@@ -15,8 +17,10 @@ class BaseRepository(IRepository):
     def get_by_id(self, object_id):
         return self._session.query(self._class).filter(self._class.id == object_id).first()
 
-    def create(self, obj: Base):
-        self._session.add(obj)
+    def create(self, obj: BaseModel):
+        obj_in_data = jsonable_encoder(obj)
+        db_obj = self._class(**obj_in_data)
+        self._session.add(db_obj)
         self._session.commit()
         self._session.refresh(obj)
         return obj
