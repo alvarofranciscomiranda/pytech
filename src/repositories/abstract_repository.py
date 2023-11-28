@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from src.models.base import Base
+from pydantic import BaseModel as BaseSchema
 
 
 class IRepository(ABC):
@@ -20,4 +22,8 @@ class IRepository(ABC):
 
     @abstractmethod
     def delete(self, id):
+        raise NotImplementedError
+
+    @abstractmethod
+    def _update_model_from_schema(self, schema: BaseSchema, model: Base):
         raise NotImplementedError

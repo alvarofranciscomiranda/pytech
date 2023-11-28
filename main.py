@@ -8,9 +8,11 @@ from src.models.sensor import Sensor
 from src.models.farm import Farm
 from src.models.inverter import Inverter
 from src.models.base import Base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, Session
 from fastapi import FastAPI
 from src.controllers.farm_controller import FarmController
+from src.controllers.sensor_controller import SensorController
+
 import os
 
 
@@ -34,7 +36,7 @@ import os
 # def update_item(item_id: int, item: Item):
 #     return {"item_name": item.name, "item_id": item_id}
 
-def session_creator():
+def session_creator() -> Session:
     engine = create_engine(os.getenv("DB_URI"))
 
     # Create the tables
@@ -50,12 +52,15 @@ def create_routers():
     app = FastAPI()
     session = session_creator()
     farm_repository = BaseRepository(session, Farm)
+    sensor_repository = BaseRepository(session, Sensor)
 
-    # Create an instance of the ItemRouter class and pass the FastAPI app instance
+    # Create an instance of the FarmRouter class and pass the FastAPI app instance
     farm_controller = FarmController(farm_repository)
+    sensor_controller = SensorController(sensor_repository)
 
     # Include the router in the main FastAPI app
     app.include_router(farm_controller.router)
+    app.include_router(sensor_controller.router)
 
     return app
 

@@ -10,12 +10,17 @@ class FarmBase(BaseModel):
     created_at: datetime
 
 
-class FarmCreate(FarmBase):
+class FarmCreate(BaseModel):
     name: str
 
 
-class FarmUpdate(FarmBase):
+class FarmUpdate(BaseModel):
+    id: int
     name: str
+
+
+class FarmDelete(BaseModel):
+    id: int
 
 
 # Properties shared by models stored in DB

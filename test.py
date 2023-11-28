@@ -1,21 +1,31 @@
 class X:
-    def __init__(self, first, last):
-        self.first = first
-        self.last = last
+    def __init__(self, id, name, age, height):
+        self.id = id
+        self.name = name
+        self.age = age
+        self.height = height
+
+    def __repr__(self):
+        return f"id: {self.id} name: {self.name} age: {self.age}  height: {self.height}"
 
 
-def print_x(*args, **kwargs):
-    for x in args:
-        print(x)
+class Y:
+    def __init__(self, id, name, age):
+        self.id = id
+        self.name = name
+        self.age = age
 
-    for k, v in kwargs.items():
-        print(k, v)
+    def __repr__(self):
+        return f"id: {self.id} name: {self.name} age: {self.age}"
+
 
 if __name__ == '__main__':
+    x = X(1, "ola", 3, 10)
+    y = Y(2, "xau", 5)
 
-    print_x('a', 'b', 'c', )
+    for k, v in x.__dict__.items():
+        if hasattr(y, k):
+            setattr(y, k, v)
 
-    # x = {'first': 'a', 'last': 'b'}
-    #
-    # print_x(**x)
-    # print_x(first='a', last='b')
+    print(y.__dict__)
+
