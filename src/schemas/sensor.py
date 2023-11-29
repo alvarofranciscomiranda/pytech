@@ -1,27 +1,18 @@
-from datetime import datetime
-from pydantic import BaseModel
+from src.schemas.device_base import DeviceBase, DeviceCreate, DeviceUpdate, DeviceInDBBase
 
 
-class SensorBase(BaseModel):
-    name: str
+class SensorBase(DeviceBase):
+    pass
 
 
-class SensorCreate(BaseModel):
-    name: str
-    farm_id: int
+class SensorCreate(DeviceCreate):
+    pass
 
 
-class SensorUpdate(BaseModel):
-    id: int
-    name: str
-    farm_id: int
+class SensorUpdate(DeviceUpdate):
+    pass
 
 
 # Properties shared by models stored in DB
-class SensorInDBBase(SensorBase):
-    id: int
-    created_at: datetime
-    farm_id: int
-
-    class Config:
-        orm_mode = True
+class SensorInDBBase(DeviceInDBBase):
+    pass

@@ -1,3 +1,6 @@
+from src.controllers.inverter_controller import InverterController
+from src.controllers.meter_controller import MeterController
+from src.models.meter import Meter
 from src.read_csv import run_function
 from src.repositories_tests import repositories_tests, in_memory_repositories_tests
 from sqlalchemy import create_engine
@@ -53,14 +56,21 @@ def create_routers():
     session = session_creator()
     farm_repository = BaseRepository(session, Farm)
     sensor_repository = BaseRepository(session, Sensor)
+    inverter_repository = BaseRepository(session, Inverter)
+    meter_repository = BaseRepository(session, Meter)
+
 
     # Create an instance of the FarmRouter class and pass the FastAPI app instance
     farm_controller = FarmController(farm_repository)
     sensor_controller = SensorController(sensor_repository)
+    inverter_controller = InverterController(inverter_repository)
+    meter_controller = MeterController(meter_repository)
 
     # Include the router in the main FastAPI app
     app.include_router(farm_controller.router)
     app.include_router(sensor_controller.router)
+    app.include_router(inverter_controller.router)
+    app.include_router(meter_controller.router)
 
     return app
 
