@@ -5,7 +5,7 @@ from pydantic import BaseModel as BaseSchema
 
 class IRepository(ABC):
     @abstractmethod
-    def get_all(self):
+    def get_all(self, offset: int, limit: int):
         raise NotImplementedError
 
     @abstractmethod

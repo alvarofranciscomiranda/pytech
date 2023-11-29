@@ -1,3 +1,4 @@
+from typing import List, Union
 from sqlalchemy.exc import SQLAlchemyError
 from src.repositories.base_repository import BaseRepository
 from src.schemas.farm import FarmInDBBase, FarmCreate, FarmUpdate
@@ -7,8 +8,9 @@ from fastapi import APIRouter, HTTPException
 class FarmController:
     def __init__(self, farm_repository: BaseRepository):
         self._farm_repository = farm_repository
-        self.router = APIRouter(prefix="/farm")
+        self.router = APIRouter(prefix="/farm", tags=["Farms"])
         self.router.add_api_route("/{farm_id}", self.read_farm, methods=["GET"], response_model=FarmInDBBase)
+        self.router.add_api_route("/", self.read_farms, methods=["GET"], response_model=List[FarmInDBBase])
         self.router.add_api_route("/", self.create_farm, methods=["POST"], response_model=FarmInDBBase)
         self.router.add_api_route("/{farm_id}", self.update_farm, methods=["PUT"], response_model=FarmInDBBase)
         self.router.add_api_route("/{farm_id}", self.delete_farm, methods=["DELETE"])
@@ -18,6 +20,13 @@ class FarmController:
         if read_farm is None:
             raise HTTPException(status_code=404, detail="Farm not found")
         return read_farm
+
+    async def read_farms(self, offset: int = 0, limit: Union[int, None] = 5):
+        try:
+            read_farms = self._farm_repository.get_all(offset, limit)
+            return read_farms
+        except SQLAlchemyError as error:
+            raise HTTPException(status_code=422, detail={"error": str(error)})
 
     async def create_farm(self, farm: FarmCreate):
         try:

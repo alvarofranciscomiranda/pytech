@@ -21,7 +21,7 @@ class InMemoryRepository(IRepository):
             self._data_source.append(obj)
             return obj
 
-    def update(self, obj: Base):
+    def update(self, obj_id: int, obj: Base):
         if hasattr(self, '_data_source'):
             existing_obj = next((o for o in self._data_source if o.id == obj.id), None)
             if existing_obj:

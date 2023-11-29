@@ -13,11 +13,19 @@ class BaseRepository(IRepository):
         self._session: Session = session
         self._class: Base = cls
 
-    def get_all(self):
-        return self._session.query(self._class).all()
-
     def get_by_id(self, object_id):
         return self._session.query(self._class).filter(self._class.id == object_id).first()
+
+    def get_all(self, offset: int, limit: int):
+        query = self._session.query(self._class)
+
+        # Apply offset and limit if provided
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
+
+        return query.all()
 
     def create(self, schema: BaseSchema):
         try:
