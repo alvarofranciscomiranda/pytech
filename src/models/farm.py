@@ -7,7 +7,7 @@ class Farm(Base):
     __tablename__ = "farm"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(60))
+    name = Column(String(60), unique=True)
     created_at = Column(DateTime, default=func.now())
 
     def __repr__(self):
