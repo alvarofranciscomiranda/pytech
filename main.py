@@ -67,9 +67,9 @@ def create_routers():
 
 if __name__ == "__main__":
 
-    filename = 'resources/farm_data/farm1/minute_values.csv'
-    #session = session_creator()
-    #repositories_tests(session)
+    # filename = 'resources/farm_data/farm1/minute_values.csv'
+    # session = session_creator()
+    # repositories_tests(session)
     # in_memory_repositories_tests()
-    #run_function()
+    # run_function()
     create_routers()
