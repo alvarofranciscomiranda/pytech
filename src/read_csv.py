@@ -11,7 +11,7 @@ def run_function():
         #These rules include specifications for delimiters, quoting characters, escape characters, and more, 
         # which determine how the data within the CSV file is structured and how special characters are handled.
         devices = csvfile.readline()
-        dialect=csv.Sniffer().sniff(devices)
+        dialect = csv.Sniffer().sniff(devices)
 
         devices = devices.split(";")
         measures = csvfile.readline().split(";")

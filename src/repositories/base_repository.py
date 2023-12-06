@@ -16,6 +16,9 @@ class BaseRepository(IRepository):
     def get_by_id(self, object_id):
         return self._session.query(self._class).filter(self._class.id == object_id).first()
 
+    def get_by_property(self, property, property_value):
+        return self._session.query(self._class).filter(self._class.__getattribute__(self._class, property) == property_value).first()
+
     def get_all(self, offset: int, limit: int):
         query = self._session.query(self._class)
 

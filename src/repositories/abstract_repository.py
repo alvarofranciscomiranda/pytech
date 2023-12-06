@@ -13,6 +13,10 @@ class IRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def get_by_property(self, property, property_value):
+        raise NotImplementedError
+
+    @abstractmethod
     def create(self, item):
         raise NotImplementedError
 

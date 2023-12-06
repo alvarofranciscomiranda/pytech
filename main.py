@@ -15,7 +15,7 @@ from src.controllers.farm_controller import FarmController
 from src.controllers.sensor_controller import SensorController
 import os
 
-from src.services.create_farm_from_report import FarmsDevices
+from src.services.import_devices_from_reports import FarmsDevices
 
 
 def session_creator() -> Session:
@@ -62,7 +62,7 @@ def main():
     meter_repository: IRepository = BaseRepository(session, Meter)
     path = "resources/farm_data/*/"
     service = FarmsDevices(farm_repository, sensor_repository, inverter_repository, meter_repository, path)
-    service.main()
+    service.parse_farm_folder()
 
 if __name__ == "__main__":
 
