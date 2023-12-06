@@ -5,8 +5,8 @@ from src.models.base import Base
 class InverterData(Base):
     __tablename__ = "inverter_data"
 
-    inverter_id = mapped_column(ForeignKey("inverter.id"), primary_key=True)
-    read_at = Column(DateTime, primary_key=True)
+    inverter_id = Column(Integer, ForeignKey("inverter.id"), nullable=False)
+    read_at = Column(DateTime, primary_key=True, nullable=False)
     pac = Column(Integer)
     pdc1 = Column(Integer)
     pdc2 = Column(Integer)
@@ -14,7 +14,7 @@ class InverterData(Base):
     pdc4 = Column(Integer)
     pdc5 = Column(Integer)
     pdc6 = Column(Integer)
-    yiel = Column(Integer)
+    yield_ = Column("yield", Integer)
     udc1 = Column(Integer)
     udc2 = Column(Integer)
     udc3 = Column(Integer)

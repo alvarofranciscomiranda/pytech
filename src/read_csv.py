@@ -5,7 +5,7 @@ import re
 def run_function():
 
     # Open a CSV file for reading
-    with open('resources/minute_values.csv', newline='') as csvfile:
+    with open('resources/farm_data/quinta/minute_values.csv', newline='') as csvfile:
         
         #In Python, a CSV dialect refers to a set of rules and conventions that define the format of a Comma-Separated Values (CSV) file. 
         #These rules include specifications for delimiters, quoting characters, escape characters, and more, 
@@ -36,3 +36,7 @@ def run_function():
 
             #print(row, end="\n\n")
             #print(row['Sensor: S 1 (#1, 63):Irradiation (W/m2)'], end="\n\n")
+
+
+if __name__ == '__main__':
+    run_function()

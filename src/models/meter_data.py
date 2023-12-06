@@ -5,10 +5,10 @@ from src.models.base import Base
 class MeterData(Base):
     __tablename__ = "meter_data"
 
-    meter_id = mapped_column(ForeignKey("meter.id"), primary_key=True)
-    read_at = Column(DateTime, primary_key=True)
+    meter_id = Column(Integer, ForeignKey("meter.id"), nullable=False)
+    read_at = Column(DateTime, primary_key=True, nullable=False)
     pac = Column(Integer)
-    yiel = Column(Integer)
+    yield_ = Column("yield", Integer)
     status = Column(Integer)
     error = Column(Integer)
     etotal_c = Column(Integer)

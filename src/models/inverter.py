@@ -7,7 +7,7 @@ class Inverter(Base):
     __tablename__ = "inverter"
 
     id = Column(Integer, primary_key=True)
-    farm_id = mapped_column(ForeignKey("farm.id"))
+    farm_id = Column(Integer, ForeignKey("farm.id"))
     name = Column(String(60))
     created_at = Column(DateTime, default=func.now())
 

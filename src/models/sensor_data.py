@@ -5,8 +5,8 @@ from src.models.base import Base
 class SensorData(Base):
     __tablename__ = "sensor_data"
 
-    sensor_id = mapped_column(ForeignKey("sensor.id"), primary_key=True)
-    read_at = Column(DateTime, primary_key=True)
+    sensor_id = Column(Integer, ForeignKey("sensor.id"), nullable=False)
+    read_at = Column(DateTime, primary_key=True, nullable=False)
     irradiation = Column(Integer)
     module_temperature = Column(Integer)
     ambient_temperature = Column(Integer)
