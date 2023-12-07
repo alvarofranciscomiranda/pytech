@@ -14,3 +14,6 @@ class SensorData(Base):
     insolation = Column(Integer)
     status = Column(Integer)
     etotal_C = Column(Integer)
+
+    def __repr__(self):
+        return f"sensor: {self.sensor_id}, timestamp: {self.read_at}"

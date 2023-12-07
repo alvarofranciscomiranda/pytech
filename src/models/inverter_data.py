@@ -36,3 +36,9 @@ class InverterData(Base):
     idc5 = Column(Integer)
     idc6 = Column(Integer)
     cos = Column(Integer)
+    iac1 = Column(Integer)
+    iac2 = Column(Integer)
+    iac3 = Column(Integer)
+
+    def __repr__(self):
+        return f"inverter: {self.inverter_id}, timestamp: {self.read_at}"

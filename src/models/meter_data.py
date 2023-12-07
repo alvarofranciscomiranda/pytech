@@ -30,3 +30,6 @@ class MeterData(Base):
     etotal_forward = Column(Integer)
     etotal_reverse = Column(Integer)
     etotal_raw = Column(Integer)
+
+    def __repr__(self):
+        return f"meter: {self.meter_id}, timestamp: {self.read_at}"
