@@ -25,42 +25,77 @@ class DevicesData:
         self.search_folder: str = search_folder
 
     def create_devices_data(self, timestamp, row):
-        # print(timestamp)
 
-        result = {}
+        separated_dicts = {}
+        for key, value in row.items():
 
-        for k, v in row.items():
-            device, measure = k.split('|')
-            if device not in result:
-                result[device] = {}
-
-            result[device][measure] = v
-
-        for device, measures_data in result.items():
-            is_last_device = list(result.keys())[-1]
-            if device == is_last_device:
+            if key == '\n|\n':
                 continue
 
+            # Extract the left part of the key before '|'
+            device = key.split('|')[0].strip()
+
+            # Check if the left part is already a key in the separated_dicts
+            if device not in separated_dicts:
+                separated_dicts[device] = {}
+
+            # Add the key-value pair to the corresponding separated dictionary
+            separated_dicts[device][key] = value
+
+        # remove device name from measures names
+        for device, device_data in separated_dicts.items():
+            updated_device_data = {}
+
+            for key, value in device_data.items():
+                measure = key.split('|')[-1].strip()
+                # Update the key based on your mapping
+                if measure in self.tag_to_column_mapping:
+                    updated_key = self.tag_to_column_mapping[measure]
+                else:
+                    updated_key = key
+
+                # Update the dictionary with the new key-value pair
+                updated_device_data[updated_key] = value
+
+            updated_device_data['read_at'] = timestamp
+            print(timestamp)
+
+            # Update the original dictionary with the modified device_data
+            separated_dicts[device] = updated_device_data
+
             if 'Sensor' in device:
-                sensor_id = self.sensor_repository.get_by_property("name", device)
-                sensor_data = SensorData(sensor_id=sensor_id, read_at=timestamp)
-                self.associate_data_sensor(sensor_data, measures_data)
-                # print(f"Device: {device}")
+                sensor = self.sensor_repository.get_by_property("name", device)
+            #     sensor_data = SensorData(sensor_id=sensor_id, read_at=timestamp)
+            #     print(f"Device: {sensor}")
             if 'Inverter' in device:
-                inverter_id = self.inverter_repository.get_by_property("name", device)
-                inverter_data = InverterData(inverter_id=inverter_id, read_at=timestamp)
-                self.associate_data_inverter(inverter_data, measures_data)
-                # print(f"Device: {device}")
+                inverter = self.inverter_repository.get_by_property("name", device)
+            #     inverter_data = InverterData(inverter_id=inverter_id, read_at=timestamp)
+            #     print(f"Device: {inverter}")
             if 'Meter' in device:
-                meter_id = self.meter_repository.get_by_property("name", device)
-                meter_data = MeterData(meter_id=meter_id, read_at=timestamp)
-                self.associate_data_meter(meter_data, measures_data)
-                # print(f"Device: {device}")
+                meter = self.meter_repository.get_by_property("name", device)
+                meter_data = MeterData(meter_id=meter.id, **updated_device_data)
+                print(f"Device: {meter_data}")
+
+            exit()
 
 
-        exit()
+
+        # result = {}
+
+        # for k, v in row.items():
+        #     device, measure = k.split('|')
+        #     if device not in result:
+        #         result[device] = {}
+        #
+        #     result[device][measure] = v
+        #
+        # for device, measures_data in result.items():
+        #     is_last_device = list(result.keys())[-1]
+        #     if device == is_last_device:
+        #         continue
 
     def get_devices_data(self, folder):
+
         for file in os.listdir(folder):
 
             with open(folder+file,  newline='') as csvfile:
@@ -101,7 +136,7 @@ class DevicesData:
                             print(k, v, e)
                             exit()
 
-                self.create_devices_data(timestamp, row)
+                    self.create_devices_data(timestamp, row)
 
     def get_farms_data(self):
         for folder in glob(self.search_folder, recursive=True):
@@ -110,91 +145,58 @@ class DevicesData:
             self.get_devices_data(folder)
             break
 
-    def associate_data_sensor(self, sensor_data: SensorData, measures_data):
-
-        sensor_data.irradiation = measures_data.get("Irradiation (W/m2)")
-        sensor_data.module_temperature = measures_data.get("Module temperature (°C)")
-        sensor_data.ambient_temperature = measures_data.get("Ambient temperature (°C)")
-        sensor_data.wind_velocity = measures_data.get("Wind velocity (m/s)")
-        sensor_data.insolation = measures_data.get("Insolation (Wh/m2)")
-        sensor_data.status = measures_data.get("Status")
-        sensor_data.etotal_C = measures_data.get("Etotal_C (WattEver)al")
-
-    def associate_data_inverter(self, inverter_data: InverterData, measures_data):
-
-        inverter_data.pac = measures_data.get("Pac (W)")
-        inverter_data.pdc1 = measures_data.get("Pdc1 (W)")
-        inverter_data.pdc2 = measures_data.get("Pdc2 (W)")
-        inverter_data.pdc3 = measures_data.get("Pdc3 (W)")
-        inverter_data.pdc4 = measures_data.get("Pdc4 (W)")
-        inverter_data.pdc5 = measures_data.get("Pdc5 (W)")
-        inverter_data.pdc6 = measures_data.get("Pdc6 (W)")
-        inverter_data.udc1 = measures_data.get("Udc1 (V)")
-        inverter_data.udc2 = measures_data.get("Udc2 (V)")
-        inverter_data.udc3 = measures_data.get("Udc3 (V)")
-        inverter_data.udc4 = measures_data.get("Udc4 (V)")
-        inverter_data.udc5 = measures_data.get("Udc5 (V)")
-        inverter_data.udc6 = measures_data.get("Udc6 (V)")
-        inverter_data.temperature = measures_data.get("Temperature (°C)")
-        inverter_data.status = measures_data.get("Status")
-        inverter_data.error = measures_data.get("Error")
-        inverter_data.uac = measures_data.get("Uac (V)")
-        inverter_data.uac1 = measures_data.get("Uac1 (V)")
-        inverter_data.uac2 = measures_data.get("Uac2 (V)")
-        inverter_data.uac3 = measures_data.get("Uac3 (V)")
-        inverter_data.idc1 = measures_data.get("Idc1 (mA)")
-        inverter_data.idc2 = measures_data.get("Idc2 (mA)")
-        inverter_data.idc3 = measures_data.get("Idc3 (mA)")
-        inverter_data.idc4 = measures_data.get("Idc4 (mA)")
-        inverter_data.idc5 = measures_data.get("Idc5 (mA)")
-        inverter_data.idc6 = measures_data.get("Idc6 (mA)")
-        inverter_data.cos = measures_data.get("Cos(Phi)")
-        inverter_data.yield_ = measures_data.get("Yield (Wh)")
-        inverter_data.iac = measures_data.get("Iac (mA)")
-        inverter_data.iac1 = measures_data.get("Iac1 (mA)")
-        inverter_data.iac2 = measures_data.get("Iac2 (mA)")
-        inverter_data.iac3 = measures_data.get("Iac3 (mA)")
-
-
-    def associate_data_meter(self, meter_data: MeterData, measures_data):
-
-        meter_data.pac = measures_data.get("Pac (W)")
-        meter_data.status = measures_data.get("Status")
-        meter_data.error = measures_data.get("Error")
-        meter_data.pac1 = measures_data.get("Pac1 (W)")
-        meter_data.pac2 = measures_data.get("Pac2 (W)")
-        meter_data.pac3 = measures_data.get("Pac3 (W)")
-        meter_data.uac1 = measures_data.get("Uac1 (V)")
-        meter_data.uac2 = measures_data.get("Uac2 (V)")
-        meter_data.uac3 = measures_data.get("Uac3 (V)")
-        meter_data.qac1 = measures_data.get("Qac1 (var)")
-        meter_data.qac2 = measures_data.get("Qac2 (var)")
-        meter_data.qac3 = measures_data.get("Qac3 (var)")
-        meter_data.iac1 = measures_data.get("Iac1 (mA)")
-        meter_data.iac2 = measures_data.get("Iac2 (mA)")
-        meter_data.iac3 = measures_data.get("Iac3 (mA)")
-        meter_data.fac = measures_data.get("Fac (Hz)")
-        meter_data.cos = measures_data.get("Cos(Phi)")
-        meter_data.pac_raw = measures_data.get("Pac raw (W)")
-        meter_data.etotal_c = measures_data.get("Etotal_C (WattEver)")
-        meter_data.etotal_forward = measures_data.get("Etotal Forward (Wh)")
-        meter_data.etotal_reverse = measures_data.get("Etotal Reverse (Wh)")
-        meter_data.etotal_raw = measures_data.get("Etotal Raw (Wh)")
-        meter_data.yield_ = measures_data.get("Yield (Wh)")
-
-
-
-        # model_data_attributes = dir(meter_data)
-        # Filter out attributes you don't want to consider
-        # valid_model_attributes = \
-        #     [attr for attr in model_data_attributes
-        #      if not callable(getattr(meter_data, attr))
-        #      and not attr.startswith('_')
-        #      and attr not in ('registry', 'metadata')]
-
-        # print(valid_model_attributes)
-        # for measure, value in measures_data.items():
-        #
-        #     print(f"  Measure: {measure}, Value: {value}")
-
+    # Create a tag-to-column mapping
+    tag_to_column_mapping = {
+            'Irradiation (W/m2)': 'irradiation',
+            'Module temperature (°C)': 'module_temperature',
+            'Ambient temperature (°C)': 'ambient_temperature',
+            'Wind velocity (m/s) ': 'wind_velocity',
+            'Insolation (Wh/m2)': 'insolation',
+            'Status': 'status',
+            'Etotal_C (WattEver)': 'etotal_c',
+            'pac': 'Pac (W)',
+            'Pdc1 (W)': 'pdc1',
+            'Pdc2 (W)': 'pdc2',
+            'Pdc3 (W)': 'pdc3',
+            'Pdc4 (W)': 'pdc4',
+            'Pdc5 (W)': 'pdc5',
+            'Pdc6 (W)': 'pdc6',
+            'Udc1 (V)': 'udc1',
+            'Udc2 (V)': 'udc2',
+            'Udc3 (V)': 'udc3',
+            'Udc4 (V)': 'udc4',
+            'Udc5 (V)': 'udc5',
+            'Udc6 (V)': 'udc6',
+            'Temperature (°C)': 'temperature',
+            'Error': 'error',
+            'Uac (V)': 'uac',
+            'Uac1 (V)': 'uac1',
+            'Uac2 (V)': 'uac2',
+            'Uac3 (V)': 'uac3',
+            'Idc1 (mA)': 'idc1',
+            'Idc2 (mA)': 'idc2',
+            'Idc3 (mA)': 'idc3',
+            'Idc4 (mA)': 'idc4',
+            'Idc5 (mA)': 'idc5',
+            'Idc6 (mA)': 'idc6',
+            'Cos(Phi)': 'cos',
+            'Yield (Wh)': 'yield_',
+            'Iac (mA)': 'iac',
+            'Iac1 (mA)': 'iac1',
+            'Iac2 (mA)': 'iac2',
+            'Iac3 (mA)': 'iac3',
+            'Pac (W)': 'pac',
+            'Pac1 (W)': 'pac1',
+            'Pac2 (W)': 'pac2',
+            'Pac3 (W)': 'pac3',
+            'Qac1 (var)': 'qac1',
+            'Qac2 (var)': 'qac2',
+            'Qac3 (var)': 'qac3',
+            'Fac (Hz)': 'fac',
+            'Pac raw (W)': 'pac_raw',
+            'Etotal Forward (Wh)': 'etotal_forward',
+            'Etotal Reverse (Wh)': 'etotal_reverse',
+            'Etotal Raw (Wh)': 'etotal_raw',
+            'Timestamp': 'read_at'
+        }
 
