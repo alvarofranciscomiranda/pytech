@@ -1,9 +1,7 @@
 import csv
 import os
 from glob import glob
-
-from src.models.base import Base
-from src.models.farm import Farm
+from src.repositories.abstract_data_repository import IDataRepository
 from src.repositories.abstract_repository import IRepository
 from src.models.sensor_data import SensorData
 from src.models.inverter_data import InverterData
@@ -16,12 +14,14 @@ class DevicesData:
                  sensor_repository: IRepository,
                  inverter_repository: IRepository,
                  meter_repository: IRepository,
+                 device_data_repository: IDataRepository,
                  search_folder: str
                  ):
         self.farm_repository: IRepository = farm_repository
         self.sensor_repository: IRepository = sensor_repository
         self.inverter_repository: IRepository = inverter_repository
         self.meter_repository: IRepository = meter_repository
+        self.device_data_repository: IDataRepository = device_data_repository
         self.search_folder: str = search_folder
 
     def create_devices_data(self, timestamp, row):
@@ -58,41 +58,25 @@ class DevicesData:
                 updated_device_data[updated_key] = value
 
             updated_device_data['read_at'] = timestamp
-            print(timestamp)
 
             # Update the original dictionary with the modified device_data
             separated_dicts[device] = updated_device_data
 
             if 'Sensor' in device:
                 sensor = self.sensor_repository.get_by_property("name", device)
-            #     sensor_data = SensorData(sensor_id=sensor_id, read_at=timestamp)
-            #     print(f"Device: {sensor}")
+                sensor_data = SensorData(sensor_id=sensor.id, **updated_device_data)
+                # print(f"Device: {sensor}")
+                yield sensor_data
             if 'Inverter' in device:
                 inverter = self.inverter_repository.get_by_property("name", device)
-            #     inverter_data = InverterData(inverter_id=inverter_id, read_at=timestamp)
-            #     print(f"Device: {inverter}")
+                inverter_data = InverterData(inverter_id=inverter.id, **updated_device_data)
+                # print(f"Device: {inverter}")
+                yield inverter_data
             if 'Meter' in device:
                 meter = self.meter_repository.get_by_property("name", device)
                 meter_data = MeterData(meter_id=meter.id, **updated_device_data)
-                print(f"Device: {meter_data}")
-
-            exit()
-
-
-
-        # result = {}
-
-        # for k, v in row.items():
-        #     device, measure = k.split('|')
-        #     if device not in result:
-        #         result[device] = {}
-        #
-        #     result[device][measure] = v
-        #
-        # for device, measures_data in result.items():
-        #     is_last_device = list(result.keys())[-1]
-        #     if device == is_last_device:
-        #         continue
+                # print(f"Device: {meter_data}")
+                yield meter_data
 
     def get_devices_data(self, folder):
 
@@ -118,7 +102,9 @@ class DevicesData:
                     headers.append(device + '|' + head)
 
                 reader = csv.DictReader(csvfile, dialect=dialect, fieldnames=headers)
-
+                sensor_data = []
+                inverter_data = []
+                meter_data = []
                 for row in reader:
 
                     if row.get("Timestamp") is None or row.get("Timestamp") == "":
@@ -136,12 +122,19 @@ class DevicesData:
                             print(k, v, e)
                             exit()
 
-                    self.create_devices_data(timestamp, row)
+                    for device_data in self.create_devices_data(timestamp, row):
+                        if isinstance(device_data, SensorData):
+                            sensor_data.append(device_data.__dict__)
+                        if isinstance(device_data, InverterData):
+                            inverter_data.append(device_data.__dict__)
+                        if isinstance(device_data, MeterData):
+                            meter_data.append(device_data.__dict__)
+
+                # self.device_data_repository.bulk_insert_data(devices_data)
+                self.device_data_repository.my_bulk_update(MeterData, meter_data)
 
     def get_farms_data(self):
         for folder in glob(self.search_folder, recursive=True):
-            farm_name = folder.split(os.sep)[2]
-            farm = self.farm_repository.get_by_property("name", farm_name)
             self.get_devices_data(folder)
             break
 
@@ -199,4 +192,3 @@ class DevicesData:
             'Etotal Raw (Wh)': 'etotal_raw',
             'Timestamp': 'read_at'
         }
-

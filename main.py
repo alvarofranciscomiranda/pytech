@@ -2,7 +2,8 @@ from src.controllers.inverter_controller import InverterController
 from src.controllers.meter_controller import MeterController
 from src.models.meter import Meter
 from sqlalchemy import create_engine
-
+from src.repositories.device_data_repository import DeviceDataRepository
+from src.repositories.abstract_data_repository import IDataRepository
 from src.repositories.abstract_repository import IRepository
 from src.repositories.base_repository import BaseRepository
 from src.models.sensor import Sensor
@@ -14,9 +15,9 @@ from fastapi import FastAPI
 from src.controllers.farm_controller import FarmController
 from src.controllers.sensor_controller import SensorController
 import os
-
 from src.services.import_devices_from_reports import FarmsDevices
 from src.services.import_data_from_reports import DevicesData
+
 
 def session_creator() -> Session:
     engine = create_engine(os.getenv("DB_URI"))
@@ -60,9 +61,11 @@ def main():
     sensor_repository: IRepository = BaseRepository(session, Sensor)
     inverter_repository: IRepository = BaseRepository(session, Inverter)
     meter_repository: IRepository = BaseRepository(session, Meter)
+    device_data_repository: IDataRepository = DeviceDataRepository(session)
     path = "resources/farm_data/*/"
     service = FarmsDevices(farm_repository, sensor_repository, inverter_repository, meter_repository, path)
-    service_data = DevicesData(farm_repository, sensor_repository, inverter_repository, meter_repository, path)
+    service_data = DevicesData(farm_repository, sensor_repository, inverter_repository, meter_repository,
+                               device_data_repository, path)
     # service.parse_farm_folder()
     service_data.get_farms_data()
 

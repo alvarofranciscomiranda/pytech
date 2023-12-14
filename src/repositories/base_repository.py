@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from sqlalchemy.exc import SQLAlchemyError
 from src.repositories.abstract_repository import IRepository
 from src.models.base import Base
@@ -16,6 +18,7 @@ class BaseRepository(IRepository):
     def get_by_id(self, object_id):
         return self._session.query(self._class).filter(self._class.id == object_id).first()
 
+    @lru_cache
     def get_by_property(self, property, property_value):
         return self._session.query(self._class).filter(self._class.__getattribute__(self._class, property) == property_value).first()
 
