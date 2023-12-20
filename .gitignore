@@ -1,5 +1,7 @@
 .venv
 .python-version
-.envrc
+.env
 **/*.pyc
 .idea
+.envrc
+

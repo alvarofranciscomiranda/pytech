@@ -3,6 +3,14 @@ version: '3.1'
 
 services:
 
+
+  app:
+    build: .
+    ports:
+      - "8000:80"
+    environment:
+      DB_URI: ${DB_URI}
+
   db:
     image: postgres
     restart: always
@@ -11,10 +19,4 @@ services:
       POSTGRES_USER: user
       POSTGRES_DB: database
     ports:
-      - 5431:5432
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+      - 5432:5432
