@@ -9,5 +9,5 @@ class IDataRepository(ABC):
     def bulk_insert_data(self, data_list):
         raise NotImplementedError
 
-    def my_bulk_update(self, cls: Base, data: list, keys):
+    def my_bulk_update(self, cls: Base, data: list):
         pass

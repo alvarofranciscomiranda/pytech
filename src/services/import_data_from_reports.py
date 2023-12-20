@@ -143,7 +143,7 @@ class DevicesData:
             'Irradiation (W/m2)': 'irradiation',
             'Module temperature (°C)': 'module_temperature',
             'Ambient temperature (°C)': 'ambient_temperature',
-            'Wind velocity (m/s) ': 'wind_velocity',
+            'Wind velocity (m/s)': 'wind_velocity',
             'Insolation (Wh/m2)': 'insolation',
             'Status': 'status',
             'Etotal_C (WattEver)': 'etotal_c',

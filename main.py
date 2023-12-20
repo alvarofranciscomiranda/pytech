@@ -55,7 +55,7 @@ def app():
     return app
 
 
-def main():
+def populate():
     session = session_creator()
     farm_repository: IRepository = BaseRepository(session, Farm)
     sensor_repository: IRepository = BaseRepository(session, Sensor)
@@ -72,5 +72,5 @@ def main():
 
 if __name__ == "__main__":
 
-    app()
-    # main()
+    #app()
+    populate()
