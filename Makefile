@@ -1,5 +1,8 @@
-clean:
-	rm -fr *.egg-info dist
+build:
+	docker build --tag pytech:latest .
 
-alembic_upgrade:
-    alembic upgrade he
+run:
+	docker run --name populate pytech:latest --env-file .env
+
+all:
+	build; run

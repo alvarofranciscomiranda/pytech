@@ -131,12 +131,16 @@ class DevicesData:
                             meter_data.append(device_data.__dict__)
 
                 # self.device_data_repository.bulk_insert_data(devices_data)
-                self.device_data_repository.my_bulk_update(MeterData, meter_data)
+                if sensor_data:
+                    self.device_data_repository.my_bulk_update(SensorData, sensor_data)
+                if inverter_data:
+                    self.device_data_repository.my_bulk_update(InverterData, inverter_data)
+                if meter_data:
+                    self.device_data_repository.my_bulk_update(MeterData, meter_data)
 
     def get_farms_data(self):
-        for folder in glob(self.search_folder, recursive=True):
+        for folder in sorted(glob(self.search_folder, recursive=True)):
             self.get_devices_data(folder)
-            break
 
     # Create a tag-to-column mapping
     tag_to_column_mapping = {
